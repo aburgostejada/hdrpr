@@ -1,0 +1,2 @@
+cd C:\Users\aburg\AppData\Local\Android\ndk\
+set NDK_PROJECT_PATH=E:\OneDrive\Ahxsoft\Repos\hdrpr\app\src\main\
