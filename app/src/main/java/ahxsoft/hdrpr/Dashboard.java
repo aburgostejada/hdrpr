@@ -20,7 +20,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class Dashboard extends Fragment {
+    public static final String CURRENT_IMAGE_FOLDER_KEY = "currentImageFolder";
     private static final String ARG_SECTION_NUMBER = "dashboard";
+
     boolean isBound = false;
     Messenger mMessenger;
     View rootView;
@@ -49,7 +51,11 @@ public class Dashboard extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView  = inflater.inflate(R.layout.fragment_dashboard, container, false);
         button = (Button) rootView.findViewById(R.id.createNewProject);
-        updateStatus(this.getString(R.string.readyToLoad) + HDRProcessor.folderPath);
+        updateStatus(getString(R.string.readyToProcess));
+
+
+//        ThumbnailUtils.extractThumbnail()
+
         return rootView;
     }
 
@@ -61,7 +67,7 @@ public class Dashboard extends Fragment {
 
     private void updateStatus(String status){
         TextView tv = (TextView) rootView.findViewById(R.id.textView);
-        tv.setText(status);
+        tv.setText(status + ": " + FileHelper.getCurrentImageName(getActivity()));
     }
 
     static abstract class ResponseHandler extends Handler {}
@@ -89,7 +95,7 @@ public class Dashboard extends Fragment {
                         }
                     });
                     Bundle bundle = new Bundle();
-//                  bundle.putString("hello", "world");
+                    bundle.putString(CURRENT_IMAGE_FOLDER_KEY, FileHelper.getFolderLocationForCurrentImage(getActivity()));
                     msg.setData(bundle);
                     updateStatus("Processing");
                     try {

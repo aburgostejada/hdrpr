@@ -39,15 +39,21 @@ public class HDRPR extends ActionBarActivity implements NavigationDrawerFragment
 
         switch (position) {
             case 0:
-                fragmentManager.beginTransaction().replace(R.id.container, NewProject.newInstance(position)).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, NewImage.newInstance(position)).commit();
                 break;
             case 1:
                 fragmentManager.beginTransaction().replace(R.id.container, Dashboard.newInstance(position)).commit();
                 break;
             default:
-                fragmentManager.beginTransaction().replace(R.id.container, NewProject.newInstance(0)).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, NewImage.newInstance(0)).commit();
                 break;
         }
+    }
+
+    public void goToDashboard(){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.container, Dashboard.newInstance(1)).commit();
+        mTitle = getString(R.string.title_section2);
     }
 
     @Override

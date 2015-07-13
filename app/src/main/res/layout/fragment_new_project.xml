@@ -8,7 +8,7 @@
 
     <!--<TextView android:id="@+id/section_label" android:layout_width="wrap_content"-->
         <!--android:layout_height="wrap_content"-->
-        <!--android:text="@string/NewProject"-->
+        <!--android:text="@string/NewImage"-->
         <!--android:textColor="#ff2a2936"-->
         <!--android:layout_marginBottom="15sp"-->
         <!--android:textStyle="bold"-->
@@ -19,7 +19,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/section_label"
-        android:text="@string/CreateNewProject"
+        android:text="@string/CreateNewImage"
         android:id="@+id/createNewProject"
         android:clickable="true"
         android:padding="10pt"

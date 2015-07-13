@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">HDRPR</string>
 
-    <string name="title_section1">New Project</string>
+    <string name="title_section1">New Image</string>
     <string name="title_section2">Dashboard</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -13,8 +13,17 @@
     <string name="processButton">Process</string>
     <string name="dashboard">Dashboard</string>
     <string name="processing">Processing</string>
-    <string name="openCVLoaded">OpenCV Loaded</string>
-    <string name="readyToLoad">Ready to load files from</string>
-    <string name="NewProject">New Project</string>
-    <string name="CreateNewProject">Create New Project</string>
+    <string name="readyToProcess">Ready to process</string>
+    <string name="NewProject">New Image</string>
+    <string name="CreateNewImage">Create New Image</string>
+    <string name="nameForNewImage">Name For New Image</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+    <string name="newProjectMessage">This is the name of the resulting image</string>
+    <string name="pickingImagesError">You haven\'t picked Image</string>
+    <string name="generalError">Something went wrong</string>
+    <string name="nameCannotBeEmpty">Name Can Not Be Empty</string>
+    <string name="problemsWithExternalStorage">Problems with external storage</string>
+    <string name="preferencesKey">preferences</string>
+    <string name="currentImageName">currentImage</string>
 </resources>

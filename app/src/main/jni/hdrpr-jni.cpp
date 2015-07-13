@@ -36,9 +36,8 @@ Java_ahxsoft_hdrpr_HDRProcessor_00024IncomingHandler_startProcessJNI( JNIEnv *en
    vector<Mat> images;
    vector<float> times;
    std::string imgPath = ConvertJString( env, imagePath );
-
    loadExposureSeq(imgPath, images, times);
-  
+   
    Mat response;
    Ptr<CalibrateDebevec> calibrate = createCalibrateDebevec();
    calibrate->process(images, response, times);
@@ -78,7 +77,7 @@ Java_ahxsoft_hdrpr_HDRProcessor_00024IncomingHandler_startProcessJNI( JNIEnv *en
    merge_mertens.release();
    
    imwrite(fileNameHDR, hdr);
-   return env->NewStringUTF((std::string("Completed processing ")).c_str());
+   return env->NewStringUTF((std::string("Completed processing ") + imgPath).c_str());
 }
 
 void loadExposureSeq(String path, vector<Mat>& images, vector<float>& times)
@@ -87,7 +86,7 @@ void loadExposureSeq(String path, vector<Mat>& images, vector<float>& times)
     string name;
     float val;
     while(list_file >> name >> val) {
-        Mat img = imread(path + name,CV_LOAD_IMAGE_COLOR);
+        Mat img = imread(path + name);
         images.push_back(img);
         times.push_back(1 / val);
     }

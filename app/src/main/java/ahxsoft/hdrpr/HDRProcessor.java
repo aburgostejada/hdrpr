@@ -11,8 +11,6 @@ import android.os.RemoteException;
 
 public class HDRProcessor extends Service {
     private String TAG = "HDRProcessorService";
-    public static final String folderPath = "/sdcard/hdr/";
-
     static final int START = 1;
     static final int RESPONSE = 2;
 
@@ -41,8 +39,9 @@ public class HDRProcessor extends Service {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case START:
-                    updateStatus(msg, startProcessJNI(folderPath));
-
+                    Bundle data = msg.getData();
+                    String folder = data.getString(Dashboard.CURRENT_IMAGE_FOLDER_KEY);
+                    updateStatus(msg, startProcessJNI(folder));
                     break;
                 default:
                     super.handleMessage(msg);
