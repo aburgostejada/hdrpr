@@ -10,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 
 public class HDRPR extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
+    public static final String IMAGE_DIR = "HDR Preview";
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */

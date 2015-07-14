@@ -3,6 +3,7 @@ package ahxsoft.hdrpr;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -11,10 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
 public class NewImage extends Fragment {
@@ -43,7 +47,7 @@ public class NewImage extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        String currentImageName = FileHelper.getCurrentImageName(getActivity());
+        String currentImageName = FileHelper.getCurrentImageFolderName(getActivity());
         try {
             if (requestCode == RESULT_LOAD_IMAGES && resultCode == Activity.RESULT_OK && null != data && !currentImageName.equals("")) {
                 ClipData clipData = data.getClipData();
@@ -52,7 +56,7 @@ public class NewImage extends Fragment {
                     if(FileHelper.isExternalStorageWritable() && FileHelper.isExternalStorageReadable()){
                         Uri uri = clipData.getItemAt(i).getUri();
                         File image = new File(FileHelper.getRealPathFromUri(getActivity(), uri));
-                        String path = FileHelper.getFolderLocationForCurrentImage(getActivity());
+                        String path = FileHelper.getCurrentFolderLocation(getActivity());
                         FileHelper.copyFile(image, new File(path + image.getName()));
                     }else{
                         AlertHelper.showShort(getActivity(), R.string.problemsWithExternalStorage);
@@ -81,7 +85,7 @@ public class NewImage extends Fragment {
                 eTDialog.show(new CallableReturn<Void,String>() {
                     @Override
                     public Void call(String param) throws Exception {
-                        FileHelper.setCurrentImageName(getActivity(), param);
+                        FileHelper.setCurrentImageFolderName(getActivity(), param);
                         Intent chooseIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         chooseIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
                         startActivityForResult(chooseIntent, RESULT_LOAD_IMAGES);
@@ -95,7 +99,40 @@ public class NewImage extends Fragment {
                 });
             }
         });
+
+
+        ArrayList<ListItem> listData = getListData();
+
+        final ListView listView = (ListView) rootView.findViewById(R.id.images_list);
+        listView.setAdapter(new ImagesListAdapter(getActivity(), listData));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> a, View v, int position, long id) {
+                ListItem newsData = (ListItem) listView.getItemAtPosition(position);
+                Toast.makeText(getActivity(), "Selected :" + " " + newsData, Toast.LENGTH_LONG).show();
+            }
+        });
+
+
         return rootView;
+    }
+
+    private ArrayList<ListItem> getListData() {
+        ArrayList<ListItem> listMockData = new ArrayList<>();
+        String[] names = getResources().getStringArray(R.array.name_array);
+        TypedArray imgs = getResources().obtainTypedArray(R.array.images_array);
+
+        for (int i = 0; i < names.length; i++) {
+            ListItem imagesList = new ListItem();
+            imagesList.setPath(imgs.getResourceId(i, -1));
+            imagesList.setName(names[i]);
+            listMockData.add(imagesList);
+        }
+
+        imgs.recycle();
+
+        return listMockData;
     }
 
 

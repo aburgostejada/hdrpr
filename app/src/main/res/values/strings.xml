@@ -26,4 +26,27 @@
     <string name="problemsWithExternalStorage">Problems with external storage</string>
     <string name="preferencesKey">preferences</string>
     <string name="currentImageName">currentImage</string>
+    <string name="cantAccessExternalStorage">Can not access external storage.  :(</string>
+    <string name="imageProcessCompleted">Process Completed For</string>
+    <string name="imageContainer">Image Container</string>
+
+    <string-array name="images_array">
+        <item>@drawable/p1</item>
+        <item>@drawable/p2</item>
+        <item>@drawable/p3</item>
+        <item>@drawable/p4</item>
+        <item>@drawable/p5</item>
+        <item>@drawable/p6</item>
+        <item>@drawable/p7</item>
+    </string-array>
+
+    <array name="name_array">
+        <item>1.jpg</item>
+        <item>2.jpg</item>
+        <item>3.jpg</item>
+        <item>4.jpg</item>
+        <item>5.jpg</item>
+        <item>6.jpg</item>
+        <item>7.jpg</item>
+    </array>
 </resources>

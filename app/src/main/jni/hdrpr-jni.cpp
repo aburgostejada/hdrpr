@@ -31,11 +31,12 @@ void loadExposureSeq(String, vector<Mat>&, vector<float>&);
 std::string ConvertJString(JNIEnv*, jstring);
 
 extern "C" JNIEXPORT jstring JNICALL 
-Java_ahxsoft_hdrpr_HDRProcessor_00024IncomingHandler_startProcessJNI( JNIEnv *env, jobject obj, jstring imagePath )
+Java_ahxsoft_hdrpr_HDRProcessor_00024IncomingHandler_startProcessJNI( JNIEnv *env, jobject obj, jstring imagePath, jstring imageName  )
 {
    vector<Mat> images;
    vector<float> times;
    std::string imgPath = ConvertJString( env, imagePath );
+   std::string imgName = ConvertJString( env, imageName );
    loadExposureSeq(imgPath, images, times);
    
    Mat response;
@@ -46,14 +47,14 @@ Java_ahxsoft_hdrpr_HDRProcessor_00024IncomingHandler_startProcessJNI( JNIEnv *en
    
    Ptr<MergeDebevec> merge_debevec = createMergeDebevec();
    merge_debevec->process(images, hdr, times, response);
-   std::string fileNameHDR = imgPath + "hdr.hdr";
+   std::string fileNameHDR = imgPath + imgName + ".hdr";
    
    response.release();
       
    Mat ldr_durand;
    Ptr<TonemapDurand> tonemap_du = createTonemapDurand(2.2f);
    tonemap_du->process(hdr, ldr_durand);
-   std::string fileNameLDR_Durand = imgPath + "ldr_durand.png";
+   std::string fileNameLDR_Durand = imgPath + imgName + "_du.png";
    imwrite(fileNameLDR_Durand, ldr_durand * 255);
    ldr_durand.release();
    tonemap_du.release();
@@ -62,7 +63,7 @@ Java_ahxsoft_hdrpr_HDRProcessor_00024IncomingHandler_startProcessJNI( JNIEnv *en
    Mat ldr_drago;
    Ptr<TonemapDrago> tonemap_dr = createTonemapDrago();
    tonemap_dr->process(hdr, ldr_drago);
-   std::string fileNameLDR_Drago = imgPath + "ldr_drago.png";
+   std::string fileNameLDR_Drago = imgPath + imgName +"_dra.png";
    imwrite(fileNameLDR_Drago, ldr_drago * 255);
    ldr_drago.release();
    tonemap_dr.release();
@@ -71,13 +72,13 @@ Java_ahxsoft_hdrpr_HDRProcessor_00024IncomingHandler_startProcessJNI( JNIEnv *en
    Mat fusion;
    Ptr<MergeMertens> merge_mertens = createMergeMertens();
    merge_mertens->process(images, fusion);
-   std::string fileNameFusion = imgPath + "fusion.png";
+   std::string fileNameFusion = imgPath + imgName + "_fu.png";
    imwrite(fileNameFusion, fusion * 255);
    fusion.release();
    merge_mertens.release();
    
    imwrite(fileNameHDR, hdr);
-   return env->NewStringUTF((std::string("Completed processing ") + imgPath).c_str());
+   return env->NewStringUTF(imgPath.c_str());
 }
 
 void loadExposureSeq(String path, vector<Mat>& images, vector<float>& times)

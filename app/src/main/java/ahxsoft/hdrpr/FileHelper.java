@@ -1,8 +1,10 @@
 package ahxsoft.hdrpr;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -17,12 +19,17 @@ import java.nio.channels.FileChannel;
 public class FileHelper {
 
 
-    public static String getCurrentImageName(Context context){
+    public static String durant = "_du.png";
+    public static String hdr = ".hdr";
+    public static String drago = "_dra.png";
+    public static String fusion = "_fu.png";
+
+    public static String getCurrentImageFolderName(Context context){
         SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.preferencesKey), Context.MODE_PRIVATE);
         return sharedPref.getString(context.getString(R.string.currentImageName), "");
     }
 
-    public static void setCurrentImageName(Context context, String currentName){
+    public static void setCurrentImageFolderName(Context context, String currentName){
         SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.preferencesKey), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(context.getString(R.string.currentImageName), currentName);
@@ -96,7 +103,24 @@ public class FileHelper {
         return context.getExternalFilesDir(null).getAbsolutePath() + File.separator + getValidFileName(currentImageName) + File.separator;
     }
 
-    public static String getFolderLocationForCurrentImage(Context activity) {
-        return getFolderLocation(activity, getCurrentImageName(activity));
+    public static String getCurrentFolderLocation(Context activity) {
+        return getFolderLocation(activity, getCurrentImageFolderName(activity));
+    }
+
+    public static String getCurrentFolderLocation(Context activity, String imageType) {
+        return getCurrentFolderLocation(activity) + getCurrentImageNameFor(activity, imageType);
+    }
+
+    public static String getCurrentImageNameFor(Context activity, String imageType) {
+        return getCurrentImageFolderName(activity) + imageType;
+    }
+
+    public static File getMediaDirectory(String name) {
+        File imagesPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        return new File(imagesPath + File.separator + HDRPR.IMAGE_DIR + File.separator + name);
+    }
+
+    public static void updateMediaServer(Context context, File file, String mimeType ) {
+        MediaScannerConnection.scanFile(context, new String[]{file.getAbsolutePath()}, new String[]{ mimeType }, null);
     }
 }

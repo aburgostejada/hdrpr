@@ -17,7 +17,7 @@ public class HDRProcessor extends Service {
     Messenger mMessenger = new Messenger(new IncomingHandler());
 
     static class IncomingHandler extends Handler {
-        public native String startProcessJNI(String imagePath);
+        public native String startProcessJNI(String imagePath, String imageName);
 
         static {
             System.loadLibrary("hdrpr-jni");
@@ -41,7 +41,8 @@ public class HDRProcessor extends Service {
                 case START:
                     Bundle data = msg.getData();
                     String folder = data.getString(Dashboard.CURRENT_IMAGE_FOLDER_KEY);
-                    updateStatus(msg, startProcessJNI(folder));
+                    String imageName = data.getString(Dashboard.CURRENT_IMAGE_NAME_KEY);
+                    updateStatus(msg, startProcessJNI(folder, imageName));
                     break;
                 default:
                     super.handleMessage(msg);
