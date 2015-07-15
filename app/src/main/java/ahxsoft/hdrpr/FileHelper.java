@@ -116,11 +116,31 @@ public class FileHelper {
     }
 
     public static File getMediaDirectory(String name) {
+        return new File(getMediaDirectoryPath() +  name);
+    }
+
+    public static File getMediaDirectory() {
+        return new File(getMediaDirectoryPath());
+    }
+
+    public static String getMediaDirectoryPath() {
         File imagesPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        return new File(imagesPath + File.separator + HDRPR.IMAGE_DIR + File.separator + name);
+        return imagesPath + File.separator + HDRPR.IMAGE_DIR + File.separator;
     }
 
     public static void updateMediaServer(Context context, File file, String mimeType ) {
         MediaScannerConnection.scanFile(context, new String[]{file.getAbsolutePath()}, new String[]{ mimeType }, null);
+    }
+
+    public static boolean isImage(File file){
+       String[] okFileExtensions =  new String[] {"jpg", "png", "gif","jpeg"};
+        for (String extension : okFileExtensions)
+        {
+            if (file.getName().toLowerCase().endsWith(extension))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

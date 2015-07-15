@@ -2,6 +2,7 @@ package ahxsoft.hdrpr;
 
 import java.lang.Object;import java.lang.Override;import java.util.ArrayList;
 import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,14 +11,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ImagesListAdapter extends BaseAdapter {
-    private final Context context;
+    private final FragmentActivity activity;
     private ArrayList<ListItem> listData;
     private LayoutInflater layoutInflater;
 
-    public ImagesListAdapter(Context context, ArrayList<ListItem> listData) {
+    public ImagesListAdapter(FragmentActivity activity, ArrayList<ListItem> listData) {
         this.listData = listData;
-        layoutInflater = LayoutInflater.from(context);
-        this.context = context;
+        layoutInflater = LayoutInflater.from(activity);
+        this.activity = activity;
     }
 
     @Override
@@ -52,7 +53,7 @@ public class ImagesListAdapter extends BaseAdapter {
         holder.nameView.setText(newsItem.getName());
 
         if (holder.imageView != null) {
-            new ImageATask(context, holder.imageView).execute(newsItem.getPath());
+            new ImageAsyncTask(activity, holder.imageView).execute(newsItem.getImage());
         }
 
         return convertView;

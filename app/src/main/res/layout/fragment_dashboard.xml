@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:id="@+id/imagesContainer"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/createNewProject"
+        android:layout_above="@+id/createNewImage"
         android:layout_alignParentEnd="true">
 
 
@@ -39,7 +39,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/processButton"
-        android:id="@+id/createNewProject"
+        android:id="@+id/createNewImage"
         android:clickable="true"
         android:padding="10pt"
         android:textSize="20pt"

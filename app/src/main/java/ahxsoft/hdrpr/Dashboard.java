@@ -57,7 +57,7 @@ public class Dashboard extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView  = inflater.inflate(R.layout.fragment_dashboard, container, false);
-        button = (Button) rootView.findViewById(R.id.createNewProject);
+        button = (Button) rootView.findViewById(R.id.createNewImage);
         updateStatus(getString(R.string.readyToProcess));
 
 

@@ -40,13 +40,16 @@ public class HDRPR extends ActionBarActivity implements NavigationDrawerFragment
 
         switch (position) {
             case 0:
-                fragmentManager.beginTransaction().replace(R.id.container, NewImage.newInstance(position)).commit();
-                break;
-            case 1:
                 fragmentManager.beginTransaction().replace(R.id.container, Dashboard.newInstance(position)).commit();
                 break;
+            case 1:
+                fragmentManager.beginTransaction().replace(R.id.container, NewImage.newInstance(position)).commit();
+                break;
+            case 2:
+                fragmentManager.beginTransaction().replace(R.id.container, ImageViewer.newInstance(position)).commit();
+                break;
             default:
-                fragmentManager.beginTransaction().replace(R.id.container, NewImage.newInstance(0)).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, Dashboard.newInstance(position)).commit();
                 break;
         }
     }
@@ -55,6 +58,18 @@ public class HDRPR extends ActionBarActivity implements NavigationDrawerFragment
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.container, Dashboard.newInstance(1)).commit();
         mTitle = getString(R.string.title_section2);
+    }
+
+    public void goToImages(){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.container, ImageViewer.newInstance(1)).commit();
+        mTitle = getString(R.string.title_section3);
+    }
+
+    public void goToNewImage() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.container, NewImage.newInstance(1)).commit();
+        mTitle = getString(R.string.title_section1);
     }
 
     @Override
@@ -69,6 +84,9 @@ public class HDRPR extends ActionBarActivity implements NavigationDrawerFragment
                 break;
             case 1:
                 mTitle = getString(R.string.title_section2);
+                break;
+            case 2:
+                mTitle = getString(R.string.title_section3);
                 break;
             default:
                 mTitle = getTitle();
@@ -110,6 +128,7 @@ public class HDRPR extends ActionBarActivity implements NavigationDrawerFragment
 
         return super.onOptionsItemSelected(item);
     }
+
 
 
 }

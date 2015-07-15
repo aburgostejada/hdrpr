@@ -1,16 +1,19 @@
 package ahxsoft.hdrpr;
 
+import android.graphics.Bitmap;
+
+import java.io.File;
 import java.lang.Override;import java.lang.String;public class ListItem {
 
 	private String name;
-	private int Path;
+	private File image;
 
-	public int getPath() {
-		return Path;
+	public File getImage() {
+		return image;
 	}
 
-	public void setPath(int Path) {
-		this.Path = Path;
+	public void setImage(File image) {
+		this.image = image;
 	}
 
 	public String getName() {
@@ -25,5 +28,12 @@ import java.lang.Override;import java.lang.String;public class ListItem {
 	@Override
 	public String toString() {
 		return "[ name=" + name + "]";
+	}
+
+	public static ListItem newFromImage(File image) {
+		ListItem imagesList = new ListItem();
+		imagesList.setImage(image);
+		imagesList.setName(image.getName());
+		return imagesList;
 	}
 }
