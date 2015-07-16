@@ -123,29 +123,21 @@ public class Dashboard extends Fragment {
 
         private void handleImageProcessingComplete(){
             if(FileHelper.isExternalStorageWritable() && FileHelper.isExternalStorageReadable()){
-                copyImage(FileHelper.durant);
-                copyImage(FileHelper.drago);
-                copyImage(FileHelper.hdr);
-                copyImage(FileHelper.fusion);
+                if(!FileHelper.copyAllImages(getActivity())){
+                    updateStatus(R.string.generalError);
+                }
+
+                if(!FileHelper.deleteImageFolder(getActivity())){
+                    updateStatus(R.string.generalError);
+                }
+                HDRPR parent = (HDRPR) getActivity();
+                parent.goToImages();
             }else{
                 updateStatus(R.string.cantAccessExternalStorage);
             }
         }
 
-        private void copyImage(String imageType){
-            File image = new File(FileHelper.getCurrentFolderLocation(getActivity(), imageType));
-            File path = FileHelper.getMediaDirectory(image.getName());
-            try {
-                FileHelper.copyFile(image, path);
-                MimeTypeMap mime = MimeTypeMap.getSingleton();
-                Uri uri = Uri.fromFile(path);
-                ContentResolver cR = getActivity().getContentResolver();
-                FileHelper.updateMediaServer(getActivity(), path, mime.getMimeTypeFromExtension(cR.getType(uri)));
-            } catch (IOException e) {
-                updateStatus(R.string.generalError);
-                e.printStackTrace();
-            }
-        }
+
 
         private void handleServiceResponse(Message msg){
             int respCode = msg.what;

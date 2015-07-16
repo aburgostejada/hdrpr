@@ -19,6 +19,8 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.concurrent.Callable;
 
 public class NewImage extends Fragment {
@@ -80,10 +82,9 @@ public class NewImage extends Fragment {
         rootView.findViewById(R.id.cancelNewImage).setVisibility(View.VISIBLE);
     }
 
-    private void setCancelNewImageInVisible(View rootView) {
-        rootView.findViewById(R.id.cancelNewImage).setVisibility(View.INVISIBLE);
-    }
-
+//    private void setCancelNewImageInVisible(View rootView) {
+//        rootView.findViewById(R.id.cancelNewImage).setVisibility(View.INVISIBLE);
+//    }
 
     private void prepareForProcessing(ClipData clipData) {
         for (int i = 0; i < clipData.getItemCount(); i++)
@@ -167,7 +168,7 @@ public class NewImage extends Fragment {
     private void loadNewImages(View rootView){
         ArrayList<ListItem> listData = getListData(clipData);
         final ListView listView = (ListView) rootView.findViewById(R.id.images_list);
-        listView.setAdapter(new ImagesListAdapter(getActivity(), listData));
+        listView.setAdapter(new ImagesListAdapter(getActivity(), listData, ImagesListAdapter.NewImage));
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
@@ -179,6 +180,12 @@ public class NewImage extends Fragment {
 
     private ArrayList<ListItem> getListData(ClipData clipData) {
         ArrayList<ListItem> listData = new ArrayList<>();
+        File[] fileList = FileHelper.getMediaDirectory().listFiles();
+        Arrays.sort(fileList, new Comparator<File>() {
+            public int compare(File f1, File f2) {
+                return Double.compare(1 / FileHelper.getExposureTimeFromImagePath(f2.getAbsolutePath()) , 1 / FileHelper.getExposureTimeFromImagePath(f1.getAbsolutePath()));
+            }
+        });
 
         for (int i = 0; i < clipData.getItemCount(); i++)
         {

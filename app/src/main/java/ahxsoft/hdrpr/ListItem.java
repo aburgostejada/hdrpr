@@ -1,14 +1,13 @@
 package ahxsoft.hdrpr;
 
-import android.graphics.Bitmap;
-
 import java.io.File;
 import java.lang.Override;import java.lang.String;public class ListItem {
 
 	private String name;
 	private File image;
+    private double exposureTime;
 
-	public File getImage() {
+    public File getImage() {
 		return image;
 	}
 
@@ -24,6 +23,14 @@ import java.lang.Override;import java.lang.String;public class ListItem {
 		this.name = name;
 	}
 
+    public void setExposureTime(double exposureTime) {
+        this.exposureTime = exposureTime;
+    }
+
+    public double getExposureTime(){
+        return exposureTime;
+    }
+
 
 	@Override
 	public String toString() {
@@ -34,6 +41,8 @@ import java.lang.Override;import java.lang.String;public class ListItem {
 		ListItem imagesList = new ListItem();
 		imagesList.setImage(image);
 		imagesList.setName(image.getName());
+		imagesList.setExposureTime(FileHelper.getExposureTimeFromImagePath(image.getAbsolutePath()));
 		return imagesList;
 	}
+
 }

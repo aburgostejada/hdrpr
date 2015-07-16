@@ -1,14 +1,19 @@
 package ahxsoft.hdrpr;
 
+import android.app.Activity;
+import android.content.ComponentCallbacks;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.media.ExifInterface;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
+import android.webkit.MimeTypeMap;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -143,4 +148,57 @@ public class FileHelper {
         }
         return false;
     }
+
+    public static Boolean copyImage(Activity activity, String imageType) {
+            File image = new File(FileHelper.getCurrentFolderLocation(activity, imageType));
+            File path = getMediaDirectory(image.getName());
+            try {
+                FileHelper.copyFile(image, path);
+                MimeTypeMap mime = MimeTypeMap.getSingleton();
+                Uri uri = Uri.fromFile(path);
+                ContentResolver cR = activity.getContentResolver();
+                updateMediaServer(activity, path, mime.getMimeTypeFromExtension(cR.getType(uri)));
+            } catch (IOException e) {
+                return false;
+            }
+        return true;
+    }
+
+    public static Boolean copyAllImages(Activity activity) {
+        return copyImage(activity, durant) && copyImage(activity, hdr) && copyImage(activity, drago) && copyImage(activity, fusion);
+
+    }
+
+    public static Boolean deleteImageFolder(Activity activity){
+        try {
+            deleteRecursive(new File(getCurrentFolderLocation(activity)));
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    public static void deleteRecursive(File fileOrDirectory) {
+        if (fileOrDirectory.isDirectory())
+            for (File child : fileOrDirectory.listFiles())
+                deleteRecursive(child);
+
+        fileOrDirectory.delete();
+    }
+
+    public static double getExposureTimeFromImagePath(String image){
+        double exposure = -1;
+        try {
+            ExifInterface exif = new ExifInterface(image);
+            String str = exif.getAttribute(ExifInterface.TAG_EXPOSURE_TIME);
+            if(str != null){
+                exposure = Double.parseDouble(str);
+            }
+        } catch (IOException e) {
+            return exposure;
+        }
+        return exposure;
+    }
+
+
 }

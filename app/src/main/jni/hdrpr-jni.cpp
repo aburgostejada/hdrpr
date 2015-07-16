@@ -89,7 +89,7 @@ void loadExposureSeq(String path, vector<Mat>& images, vector<float>& times)
     while(list_file >> name >> val) {
         Mat img = imread(path + name);
         images.push_back(img);
-        times.push_back(1 / val);
+        times.push_back(val);
     }
     list_file.close();
 }

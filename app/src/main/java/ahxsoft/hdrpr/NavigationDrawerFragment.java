@@ -258,6 +258,10 @@ public class NavigationDrawerFragment extends Fragment {
             HDRPR parent = (HDRPR) getActivity();
             parent.goToImages();
             return true;
+        }else if( item.getItemId() == R.id.action_go_to_new_images){
+            HDRPR parent = (HDRPR) getActivity();
+            parent.goToNewImage();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
