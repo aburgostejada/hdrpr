@@ -14,16 +14,21 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.webkit.MimeTypeMap;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FileHelper {
 
 
+    private static final String P_FILE_NAME = "p_file.txt";
     public static String durant = "_du.png";
     public static String hdr = ".hdr";
     public static String drago = "_dra.png";
@@ -201,4 +206,22 @@ public class FileHelper {
     }
 
 
+    public static void createProcessControlFile(Activity activity, HashMap<String, Double> dataFromView) {
+        String eol = System.getProperty("line.separator");
+        try
+        {
+            FileWriter writer = new FileWriter(new File(getCurrentFolderLocation(activity), P_FILE_NAME));
+            for(Map.Entry<String, Double> image : dataFromView.entrySet()){
+                String line = image.getKey() + " " + image.getValue().toString() + eol;
+                writer.append(line);
+            }
+            writer.flush();
+            writer.close();
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
+
+    }
 }

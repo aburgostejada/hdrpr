@@ -13,7 +13,10 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -21,21 +24,33 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.concurrent.Callable;
 
 public class NewImage extends Fragment {
     private static final String ARG_SECTION_NUMBER = "newImages";
+    private static final String ARG_START_NEW_IMAGE = "startNewImage";
     public int RESULT_LOAD_IMAGES = 0x10;
     View rootView;
     String currentName;
-    Boolean readyToProcess =false;
     ClipData clipData;
+    Boolean readyToProcess =false;
+    Boolean startNewImage = false;
 
 
     public static NewImage newInstance(int sectionNumber) {
         NewImage fragment = new NewImage();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static Fragment newInstance(int sectionNumber, boolean startNewImage) {
+        NewImage fragment = new NewImage();
+        Bundle args = new Bundle();
+        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        args.putBoolean(ARG_START_NEW_IMAGE, startNewImage);
         fragment.setArguments(args);
         return fragment;
     }
@@ -47,7 +62,8 @@ public class NewImage extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Bundle args = getArguments();
+        startNewImage = args.getBoolean(ARG_START_NEW_IMAGE, false);
     }
 
     @Override
@@ -56,11 +72,7 @@ public class NewImage extends Fragment {
         String currentImageName = FileHelper.getCurrentImageFolderName(getActivity());
         try {
             if (requestCode == RESULT_LOAD_IMAGES && resultCode == Activity.RESULT_OK && null != data && !currentImageName.equals("")) {
-                clipData = data.getClipData();
-                loadNewImages(rootView);
-                setCancelNewImageVisible(rootView);
-                readyToProcess = true;
-                updateNewImageButton(rootView);
+                preProcessSetUp(data);
             } else {
                 AlertHelper.showLong(getActivity(), R.string.pickingImagesError);
             }
@@ -69,7 +81,15 @@ public class NewImage extends Fragment {
         }
     }
 
-    private void updateNewImageButton(View rootView) {
+    private void preProcessSetUp(Intent data){
+        clipData = data.getClipData();
+        loadNewImages(rootView);
+        setCancelNewImageVisible(rootView);
+        readyToProcess = true;
+        updateNewImageButton(rootView, true);
+    }
+
+    private void updateNewImageButton(View rootView, Boolean readyToProcess) {
         Button newImage = (Button) rootView.findViewById(R.id.createNewImage);
         if(readyToProcess){
             newImage.setText(R.string.ok);
@@ -102,6 +122,7 @@ public class NewImage extends Fragment {
                 AlertHelper.showShort(getActivity(), R.string.problemsWithExternalStorage);
             }
         }
+        FileHelper.createProcessControlFile(getActivity(), getDataFromView());
     }
 
     @Override
@@ -111,6 +132,11 @@ public class NewImage extends Fragment {
         Button cancelImageButton= (Button) rootView.findViewById(R.id.cancelNewImage);
         newImageButton.setOnClickListener(createNewImagesOnClickListener());
         cancelImageButton.setOnClickListener(cancelNewImagesOnClickListener());
+
+        if(startNewImage){
+            displayShowNewImage();
+        }
+
         return rootView;
     }
 
@@ -121,40 +147,69 @@ public class NewImage extends Fragment {
             public void onClick(View view) {
                 readyToProcess = false;
                 HDRPR parent = (HDRPR) getActivity();
-                parent.goToNewImage();
+                parent.goToStartNewImage();
             }
         };
     }
+
+    private void displayShowNewImage(){
+        EditTextDialog eTDialog = AlertHelper.getNewEditTextDialog(getActivity(), R.string.nameForNewImage, R.string.ok, R.string.cancel, R.string.newProjectMessage);
+        eTDialog.show(new CallableReturn<Void, String>() {
+            @Override
+            public Void call(String param) throws Exception {
+                displayImagePicker();
+                currentName = param;
+                return null;
+            }
+        }, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                return null;
+            }
+        });
+    }
+
 
     private OnClickListener createNewImagesOnClickListener(){
         return new OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(readyToProcess){
+                    FileHelper.setCurrentImageFolderName(getActivity(), currentName);
+                    prepareForProcessing(clipData);
                     goToDashboard();
                 }else{
-                    EditTextDialog eTDialog = AlertHelper.getNewEditTextDialog(getActivity(), R.string.nameForNewImage, R.string.ok, R.string.cancel, R.string.newProjectMessage);
-                    eTDialog.show(new CallableReturn<Void, String>() {
-                        @Override
-                        public Void call(String param) throws Exception {
-                            displayImagePicker();
-                            currentName = param;
-                            return null;
-                        }
-                    }, new Callable<Void>() {
-                        @Override
-                        public Void call() throws Exception {
-                            return null;
-                        }
-                    });
+                    displayShowNewImage();
                 }
             }
         };
     }
 
+    private HashMap<String, Double> getDataFromView(){
+        final ListView listView = (ListView) rootView.findViewById(R.id.images_list);
+
+        ListAdapter adapter = listView.getAdapter();
+        int count = adapter.getCount();
+        HashMap<String, Double> images = new HashMap<>();
+
+        for(int i=0;i<count ;i++){
+            View view = listView.getChildAt(i);
+            if(view != null){
+                TextView name = (TextView) view.findViewById(R.id.name);
+                EditText editText = (EditText) view.findViewById(R.id.exposure);
+                Double exposure = NumberHelper.fromStringFraction(editText.getText().toString());
+                images.put(name.getText().toString(),exposure);
+            }else{
+                ListItem item = (ListItem) adapter.getItem(i);
+                images.put(item.getName(), item.getExposureTime());
+            }
+        }
+
+        return images;
+    }
+
     private void goToDashboard() {
-        FileHelper.setCurrentImageFolderName(getActivity(), currentName);
-        prepareForProcessing(clipData);
+
         HDRPR parent = (HDRPR) getActivity();
         parent.goToDashboard();
     }
@@ -172,8 +227,8 @@ public class NewImage extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-                ListItem newsData = (ListItem) listView.getItemAtPosition(position);
-                Toast.makeText(getActivity(), "Selected :" + " " + newsData, Toast.LENGTH_LONG).show();
+                ListItem data = (ListItem) listView.getItemAtPosition(position);
+                Toast.makeText(getActivity(), "Selected :" + " " + data, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -183,7 +238,7 @@ public class NewImage extends Fragment {
         File[] fileList = FileHelper.getMediaDirectory().listFiles();
         Arrays.sort(fileList, new Comparator<File>() {
             public int compare(File f1, File f2) {
-                return Double.compare(1 / FileHelper.getExposureTimeFromImagePath(f2.getAbsolutePath()) , 1 / FileHelper.getExposureTimeFromImagePath(f1.getAbsolutePath()));
+                return Double.compare(1 / FileHelper.getExposureTimeFromImagePath(f2.getAbsolutePath()), 1 / FileHelper.getExposureTimeFromImagePath(f1.getAbsolutePath()));
             }
         });
 
@@ -209,5 +264,6 @@ public class NewImage extends Fragment {
         super.onAttach(activity);
         ((HDRPR) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
     }
+
 
 }

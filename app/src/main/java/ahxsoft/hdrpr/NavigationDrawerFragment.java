@@ -20,7 +20,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -260,7 +259,7 @@ public class NavigationDrawerFragment extends Fragment {
             return true;
         }else if( item.getItemId() == R.id.action_go_to_new_images){
             HDRPR parent = (HDRPR) getActivity();
-            parent.goToNewImage();
+            parent.goToStartNewImage();
             return true;
         }
 

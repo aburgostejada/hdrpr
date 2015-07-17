@@ -83,7 +83,7 @@ Java_ahxsoft_hdrpr_HDRProcessor_00024IncomingHandler_startProcessJNI( JNIEnv *en
 
 void loadExposureSeq(String path, vector<Mat>& images, vector<float>& times)
 {
-    ifstream list_file((path + "list.txt").c_str());
+    ifstream list_file((path + "p_file.txt").c_str());
     string name;
     float val;
     while(list_file >> name >> val) {

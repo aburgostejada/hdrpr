@@ -64,9 +64,9 @@ public class HDRPR extends ActionBarActivity implements NavigationDrawerFragment
         fragmentManager.beginTransaction().replace(R.id.container, ImageViewer.newInstance(2)).commit();
     }
 
-    public void goToNewImage() {
+    public void goToStartNewImage() {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.container, NewImage.newInstance(1)).commit();
+        fragmentManager.beginTransaction().replace(R.id.container, NewImage.newInstance(1, true)).commit();
     }
 
     @Override
