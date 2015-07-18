@@ -35,5 +35,25 @@
     <string name="exposureLabel">Exposure</string>
     <string name="placeholder">Test Name</string>
     <string name="sec">Sec </string>
+    <string name="hdrOptions">Options</string>
+    <string name="saveHdrFile">Save \".hdr\" file?</string>
+
+    <string-array name="toneMapTypes">
+        <item>Auto</item>
+        <item>Durand</item>
+        <item>Drago</item>
+    </string-array>
+
+    <string-array name="Sizes">
+        <item>2048</item>
+        <item>1340</item>
+        <item>1200</item>
+        <item>1128</item>
+        <item>1080</item>
+        <item>900</item>
+        <item>720</item>
+        <item>600</item>
+        <item>480</item>
+    </string-array>
 
 </resources>

@@ -22,10 +22,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
 
@@ -91,7 +88,7 @@ public class NewImage extends Fragment {
     }
 
     private void updateNewImageButton(View rootView, Boolean readyToProcess) {
-        Button newImage = (Button) rootView.findViewById(R.id.createNewImage);
+        Button newImage = (Button) rootView.findViewById(R.id.processImage);
         if(readyToProcess){
             newImage.setText(R.string.ok);
         }else {
@@ -129,7 +126,7 @@ public class NewImage extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView  = inflater.inflate(R.layout.fragment_new_image, container, false);
-        Button newImageButton = (Button) rootView.findViewById(R.id.createNewImage);
+        Button newImageButton = (Button) rootView.findViewById(R.id.processImage);
         Button cancelImageButton= (Button) rootView.findViewById(R.id.cancelNewImage);
         newImageButton.setOnClickListener(createNewImagesOnClickListener());
         cancelImageButton.setOnClickListener(cancelNewImagesOnClickListener());

@@ -14,37 +14,38 @@
         <!--android:textSize="14pt"-->
         <!--android:typeface="sans" />-->
 
+
+
+
+    <FrameLayout android:id="@+id/process_image_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_above="@+id/dashboardLabel"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="25sp"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/textView"
+        android:id="@+id/dashboardLabel"
         android:textSize="25sp"
-        android:layout_above="@+id/imagesContainer"
+        android:layout_above="@+id/processImage"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="63dp" />
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:id="@+id/imagesContainer"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/createNewImage"
-        android:layout_alignParentEnd="true">
-
-
-    </LinearLayout>
+        android:layout_marginBottom="20sp" />
 
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/processButton"
-        android:id="@+id/createNewImage"
+        android:id="@+id/processImage"
         android:clickable="true"
         android:padding="10pt"
         android:textSize="20pt"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
+
+
 
 
 </RelativeLayout>

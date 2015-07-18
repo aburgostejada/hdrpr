@@ -27,17 +27,17 @@
 using namespace cv;
 using namespace std;
 
-void loadExposureSeq(String, vector<Mat>&, vector<float>&);
+void loadExposureSeq(String, vector<Mat>&, vector<float>&, int width, int height);
 std::string ConvertJString(JNIEnv*, jstring);
 
 extern "C" JNIEXPORT jstring JNICALL 
-Java_ahxsoft_hdrpr_HDRProcessor_00024IncomingHandler_startProcessJNI( JNIEnv *env, jobject obj, jstring imagePath, jstring imageName  )
+Java_ahxsoft_hdrpr_HDRProcessor_00024IncomingHandler_startProcessJNI( JNIEnv *env, jobject obj, jstring imagePath, jstring imageName,  jint width, jint height)
 {
    vector<Mat> images;
    vector<float> times;
    std::string imgPath = ConvertJString( env, imagePath );
    std::string imgName = ConvertJString( env, imageName );
-   loadExposureSeq(imgPath, images, times);
+   loadExposureSeq(imgPath, images, times, width, height);
    
    Mat response;
    Ptr<CalibrateDebevec> calibrate = createCalibrateDebevec();
@@ -81,14 +81,17 @@ Java_ahxsoft_hdrpr_HDRProcessor_00024IncomingHandler_startProcessJNI( JNIEnv *en
    return env->NewStringUTF(imgPath.c_str());
 }
 
-void loadExposureSeq(String path, vector<Mat>& images, vector<float>& times)
+void loadExposureSeq(String path, vector<Mat>& images, vector<float>& times, int width, int height)
 {
     ifstream list_file((path + "p_file.txt").c_str());
     string name;
     float val;
     while(list_file >> name >> val) {
         Mat img = imread(path + name);
-        images.push_back(img);
+        Size size(width, height);
+        Mat dst;
+        resize(img,dst,size);
+        images.push_back(dst);
         times.push_back(val);
     }
     list_file.close();
