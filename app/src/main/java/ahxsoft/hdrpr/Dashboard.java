@@ -12,7 +12,6 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
@@ -20,15 +19,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 public class Dashboard extends Fragment {
-    public static final String CURRENT_IMAGE_FOLDER_KEY = "currentImageFolder";
-    public static final String CURRENT_IMAGE_NAME_KEY = "currentImageName";
     private static final String ARG_SECTION_NUMBER = "dashboard";
-
     boolean isBound = false;
-    boolean readyToProcess =false;
+    private boolean saveHDFFile = false;
     Messenger mMessenger;
     View rootView;
     Button button;
@@ -49,14 +47,31 @@ public class Dashboard extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        bindService();
+        String currentImage = getCurrentImageName();
+        if(currentImage.equals("")){
+            goToNewImage();
+        }
+    }
+
+    private void bindService(){
         Intent intent = new Intent(getActivity(), HDRProcessor.class);
         getActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        if(mMessenger == null){
+            bindService();
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView  = inflater.inflate(R.layout.fragment_dashboard, container, false);
         button = (Button) rootView.findViewById(R.id.processImage);
+
         updateStatus(getString(R.string.readyToProcess));
         return rootView;
     }
@@ -88,21 +103,28 @@ public class Dashboard extends Fragment {
         return new OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(readyToProcess){
+                if(isProcessImageVisible()){
                     sendMessage();
+                    updateProcessImageButton(true);
                 }else{
-                    displayShowProcessImage(view.getRootView());
+                    displayShowProcessImage();
                 }
             }
         };
     }
 
-    private void updateProcessImageButton(View rootView, boolean readyToProcess) {
+    private void updateProcessImageButton(boolean hide) {
         Button newImage = (Button) rootView.findViewById(R.id.processImage);
-        if(readyToProcess){
+        if(isProcessImageVisible()){
             newImage.setText(R.string.ok);
         }else {
             newImage.setText(R.string.processButton);
+        }
+
+        if(hide){
+            newImage.setVisibility(View.INVISIBLE);
+        }else{
+            newImage.setVisibility(View.VISIBLE);
         }
     }
 
@@ -115,49 +137,69 @@ public class Dashboard extends Fragment {
             }
         });
         Bundle bundle = new Bundle();
-        bundle.putString(CURRENT_IMAGE_FOLDER_KEY, getCurrentImageFolder());
-        bundle.putString(CURRENT_IMAGE_NAME_KEY, getCurrentImageName());
+        bundle.putString(Constants.CURRENT_IMAGE_FOLDER_KEY, getCurrentImageFolder());
+        bundle.putString(Constants.CURRENT_IMAGE_NAME_KEY, getCurrentImageName());
+        bundle.putString(Constants.SELECTED_TONE_MAP_ALG_KEY, getSelectedToneMapAlg());
+        bundle.putInt(Constants.SELECTED_MAX_IMAGE_HEIGHT_KEY, getSelectedMaxImageHeight());
+        saveHDFFile = getShouldSaveHDRFIle();
+        bundle.putBoolean(Constants.SHOULD_SAVE_HDR_FILE_KEY, saveHDFFile);
+
+
         msg.setData(bundle);
         updateStatus("Processing");
         try {
-            mMessenger.send(msg);
+            if(mMessenger != null){
+                mMessenger.send(msg);
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
 
-    private void displayShowProcessImage(final View rootView){
-//        EditTextDialog eTDialog = getProcesTextDialog(getActivity(), R.string.nameForNewImage, R.string.ok, R.string.cancel, R.string.hdrOptions);
-//        eTDialog.show(new CallableReturn<Void, String>() {
-//            @Override
-//            public Void call(String param) throws Exception {
-//                sendMessage();
-//                return null;
-//            }
-//        }, new Callable<Void>() {
-//            @Override
-//            public Void call() throws Exception {
-//                return null;
-//            }
-//        });
+    private int getSelectedMaxImageHeight() {
+        Spinner size =(Spinner) rootView.findViewById(R.id.sizes);
+        return  Integer.parseInt(size.getSelectedItem().toString());
+    }
 
-        this.readyToProcess = true;
-        updateProcessImageButton(rootView, true);
+    private boolean getShouldSaveHDRFIle() {
+        CheckBox saveHDRFile = (CheckBox) rootView.findViewById(R.id.saveHdrFile);
+        return saveHDRFile.isChecked();
+    }
+
+    private String getSelectedToneMapAlg() {
+        Spinner toneMapAlg =(Spinner) rootView.findViewById(R.id.toneMapAlg);
+        return toneMapAlg.getSelectedItem().toString();
+    }
+
+    private void displayShowProcessImage(){
+        updateProcessImageButton(false);
 
         final FragmentTransaction ft = getFragmentManager().beginTransaction();
         final Fragment fragment = ProcessImageFragment.newInstance();
         ft.setCustomAnimations(R.anim.abc_fade_in, R.anim.abc_fade_out);
-        ft.add(R.id.process_image_fragment_container, fragment);
+        ft.add(R.id.process_image_fragment_container, fragment, ProcessImageFragment.TAG);
         ft.addToBackStack(null);
         ft.commit();
 
         getFragmentManager().addOnBackStackChangedListener(
         new FragmentManager.OnBackStackChangedListener() {
             public void onBackStackChanged() {
-                readyToProcess = false;
-                updateProcessImageButton(rootView, false);
+                updateProcessImageButton(false);
             }
         });
+    }
+
+    private boolean isProcessImageVisible(){
+        FragmentManager fm = getFragmentManager();
+        if(fm == null){
+            return false;
+        }else{
+            Fragment fragment = fm.findFragmentByTag(ProcessImageFragment.TAG);
+            if (fragment != null && fragment.isVisible()) {
+                return true;
+            }
+            return false;
+        }
     }
 
     private void handleServiceResponse(Message msg){
@@ -177,21 +219,33 @@ public class Dashboard extends Fragment {
 
     private void handleImageProcessingComplete(){
         if(FileHelper.isExternalStorageWritable() && FileHelper.isExternalStorageReadable()){
-            if(!FileHelper.copyAllImages(getActivity())){
+            if(!FileHelper.copyAllImages(getActivity(), saveHDFFile)){
                 updateStatus(R.string.generalError);
+                return;
             }
 
             if(!FileHelper.deleteImageFolder(getActivity())){
                 updateStatus(R.string.generalError);
+                return;
             }
-            HDRPR parent = (HDRPR) getActivity();
-            parent.goToImages();
+
+            FileHelper.setCurrentImageFolderName(getActivity(), "");
+            goToImages();
         }else{
             updateStatus(R.string.cantAccessExternalStorage);
         }
     }
 
+    private void goToImages(){
+        HDRPR parent = (HDRPR) getActivity();
+        parent.goToImages();
+    }
 
+
+    private void goToNewImage(){
+        HDRPR parent = (HDRPR) getActivity();
+        parent.goToNewImage();
+    }
 
     private static abstract class ResponseHandler extends Handler {}
 
@@ -209,7 +263,6 @@ public class Dashboard extends Fragment {
             isBound = false;
         }
     };
-
 
 
 }

@@ -10,18 +10,28 @@ import android.widget.Spinner;
 
 public class ProcessImageFragment extends Fragment {
 
+    public static final String TAG = "ProcessingImageFragment";
+
 
     public static Fragment newInstance() {
         return new ProcessImageFragment();
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.process_image_fragment, container, false);
-        setSpinner(view, R.id.toneMapKinds, R.array.toneMapTypes);
+        setSpinner(view, R.id.toneMapAlg, R.array.toneMapTypes);
         setSpinner(view, R.id.sizes, R.array.Sizes);
         return view;
     }
+
+
 
 
     private void setSpinner(View view, int id, int content){

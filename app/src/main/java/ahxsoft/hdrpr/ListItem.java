@@ -51,4 +51,8 @@ public class ListItem implements Comparable {
     public int compareTo(Object another) {
         return Double.compare(((ListItem)another).getExposureTime(), getExposureTime());
     }
+
+	public void delete() {
+		getImage().delete();
+	}
 }

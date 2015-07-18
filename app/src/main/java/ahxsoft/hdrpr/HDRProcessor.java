@@ -10,14 +10,14 @@ import android.os.Messenger;
 import android.os.RemoteException;
 
 public class HDRProcessor extends Service {
-    private String TAG = "HDRProcessorService";
+    public static String TAG = "HDRProcessorService";
     static final int START = 1;
     static final int RESPONSE = 2;
 
     Messenger mMessenger = new Messenger(new IncomingHandler());
 
     static class IncomingHandler extends Handler {
-        public native String startProcessJNI(String imagePath, String imageName, int width, int height);
+        public native String startProcessJNI(String imagePath, String imageName, int maxHeight, String toneMapAlgType, boolean hdrFile);
 
         static {
             System.loadLibrary("hdrpr-jni");
@@ -40,14 +40,16 @@ public class HDRProcessor extends Service {
             switch (msg.what) {
                 case START:
                     Bundle data = msg.getData();
-                    String folder = data.getString(Dashboard.CURRENT_IMAGE_FOLDER_KEY);
-                    String imageName = data.getString(Dashboard.CURRENT_IMAGE_NAME_KEY);
-                    updateStatus(msg, startProcessJNI(folder, imageName, 500, 500));
+                    int maxImageHeight = data.getInt(Constants.SELECTED_MAX_IMAGE_HEIGHT_KEY);
+                    boolean saveHDRFile = data.getBoolean(Constants.SHOULD_SAVE_HDR_FILE_KEY);
+                    String folder = data.getString(Constants.CURRENT_IMAGE_FOLDER_KEY);
+                    String imageName = data.getString(Constants.CURRENT_IMAGE_NAME_KEY);
+                    String toneMapAlg = data.getString(Constants.SELECTED_TONE_MAP_ALG_KEY);
+                    updateStatus(msg, startProcessJNI(folder, imageName, maxImageHeight, toneMapAlg, saveHDRFile));
                     break;
                 default:
                     super.handleMessage(msg);
             }
-
         }
     }
 

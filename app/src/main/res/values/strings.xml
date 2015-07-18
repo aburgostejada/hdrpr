@@ -37,6 +37,15 @@
     <string name="sec">Sec </string>
     <string name="hdrOptions">Options</string>
     <string name="saveHdrFile">Save \".hdr\" file?</string>
+    <string name="open">Open</string>
+    <string name="share">Share</string>
+    <string name="delete">Delete</string>
+    <string name="choseAction">Choose Action</string>
+    <string name="send_to">Share with</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="deleteImage">Delete image</string>
+    <string name="areYouSure">Are you sure you want to delete</string>
 
     <string-array name="toneMapTypes">
         <item>Auto</item>
@@ -50,10 +59,9 @@
         <item>1200</item>
         <item>1128</item>
         <item>1080</item>
+
         <item>900</item>
         <item>720</item>
-        <item>600</item>
-        <item>480</item>
     </string-array>
 
 </resources>

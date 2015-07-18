@@ -11,15 +11,14 @@
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/toneMapKinds"
-        />
+        android:id="@+id/toneMapAlg"/>
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="24sp"
         android:text="@string/saveHdrFile"
-        android:id="@+id/hdrFile"
+        android:id="@+id/saveHdrFile"
         android:padding="10dp" />
 
 

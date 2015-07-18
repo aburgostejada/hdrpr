@@ -2,6 +2,8 @@ package ahxsoft.hdrpr;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -59,6 +61,25 @@ public class AlertHelper {
     }
 
 
+    public static void setYesNoDialog(FragmentActivity context, int dialogTitle, String dialogMessage, final Handler.Callback yesCallback, final Handler.Callback noCallback){
+        new AlertDialog.Builder(context)
+                .setTitle(dialogTitle)
+                .setMessage(dialogMessage)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Message message = new Message();
+                        yesCallback.handleMessage(message);
+                        dialog.dismiss();
+                    }
+                }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                Message message = new Message();
+                noCallback.handleMessage(message);
+                dialog.cancel();
+            }
+        }).show();
+    }
 }
 
 

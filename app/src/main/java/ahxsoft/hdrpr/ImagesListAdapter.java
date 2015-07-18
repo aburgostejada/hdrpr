@@ -98,6 +98,9 @@ public class ImagesListAdapter extends BaseAdapter {
         return convertView;
     }
 
+    public void remove(ListItem image) {
+        listData.remove(image);
+    }
 
 
     static class ViewHolder {

@@ -27,70 +27,91 @@
 using namespace cv;
 using namespace std;
 
-void loadExposureSeq(String, vector<Mat>&, vector<float>&, int width, int height);
+void loadExposureSeq(String, vector<Mat>&, vector<float>&, int maxHeight);
 std::string ConvertJString(JNIEnv*, jstring);
 
 extern "C" JNIEXPORT jstring JNICALL 
-Java_ahxsoft_hdrpr_HDRProcessor_00024IncomingHandler_startProcessJNI( JNIEnv *env, jobject obj, jstring imagePath, jstring imageName,  jint width, jint height)
+Java_ahxsoft_hdrpr_HDRProcessor_00024IncomingHandler_startProcessJNI( JNIEnv *env, jobject obj, jstring imagePath, jstring imageName, jint maxHeight, jstring toneMapAlg, jboolean hdrFile)
 {
    vector<Mat> images;
    vector<float> times;
    std::string imgPath = ConvertJString( env, imagePath );
    std::string imgName = ConvertJString( env, imageName );
-   loadExposureSeq(imgPath, images, times, width, height);
+   std::string toneMapAlgType = ConvertJString( env, toneMapAlg );
    
-   Mat response;
-   Ptr<CalibrateDebevec> calibrate = createCalibrateDebevec();
-   calibrate->process(images, response, times);
+   std::string drago = "Drago";
+   std::string durand = "Durand";
+   std::string autoMatic = "Auto";
    
-   Mat hdr;
+   loadExposureSeq(imgPath, images, times, maxHeight);
    
-   Ptr<MergeDebevec> merge_debevec = createMergeDebevec();
-   merge_debevec->process(images, hdr, times, response);
-   std::string fileNameHDR = imgPath + imgName + ".hdr";
+   if(toneMapAlgType == autoMatic)
+   {
+        Mat fusion;
+        Ptr<MergeMertens> merge_mertens = createMergeMertens();
+        merge_mertens->process(images, fusion);
+        std::string fileNameFusion = imgPath + imgName + ".png";
+        imwrite(fileNameFusion, fusion * 255);
+        fusion.release();
+        merge_mertens.release();     
+   }else {
+        Mat response;
+        Ptr<CalibrateDebevec> calibrate = createCalibrateDebevec();
+        calibrate->process(images, response, times);
+       
+        Mat hdr;
+       
+        Ptr<MergeDebevec> merge_debevec = createMergeDebevec();
+        merge_debevec->process(images, hdr, times, response);
+       
+        if(hdrFile){
+            std::string fileNameHDR = imgPath + imgName + ".hdr";
+            imwrite(fileNameHDR, hdr);     
+        }
+     
+       response.release();
+          
+        if(toneMapAlgType == durand){
+            Mat ldr_durand;
+            Ptr<TonemapDurand> tonemap_du = createTonemapDurand(2.2f);
+            tonemap_du->process(hdr, ldr_durand);
+            std::string fileNameLDR_Durand = imgPath + imgName + ".png";
+            imwrite(fileNameLDR_Durand, ldr_durand * 255);
+            ldr_durand.release();
+            tonemap_du.release();          
+        }else if(toneMapAlgType == drago){
+            Mat ldr_drago;
+            Ptr<TonemapDrago> tonemap_dr = createTonemapDrago();
+            tonemap_dr->process(hdr, ldr_drago);
+            std::string fileNameLDR_Drago = imgPath + imgName +".png";
+            imwrite(fileNameLDR_Drago, ldr_drago * 255);
+            ldr_drago.release();
+            tonemap_dr.release();
+        }
+   }
    
-   response.release();
-      
-   Mat ldr_durand;
-   Ptr<TonemapDurand> tonemap_du = createTonemapDurand(2.2f);
-   tonemap_du->process(hdr, ldr_durand);
-   std::string fileNameLDR_Durand = imgPath + imgName + "_du.png";
-   imwrite(fileNameLDR_Durand, ldr_durand * 255);
-   ldr_durand.release();
-   tonemap_du.release();
-   
-   
-   Mat ldr_drago;
-   Ptr<TonemapDrago> tonemap_dr = createTonemapDrago();
-   tonemap_dr->process(hdr, ldr_drago);
-   std::string fileNameLDR_Drago = imgPath + imgName +"_dra.png";
-   imwrite(fileNameLDR_Drago, ldr_drago * 255);
-   ldr_drago.release();
-   tonemap_dr.release();
-
-   
-   Mat fusion;
-   Ptr<MergeMertens> merge_mertens = createMergeMertens();
-   merge_mertens->process(images, fusion);
-   std::string fileNameFusion = imgPath + imgName + "_fu.png";
-   imwrite(fileNameFusion, fusion * 255);
-   fusion.release();
-   merge_mertens.release();
-   
-   imwrite(fileNameHDR, hdr);
    return env->NewStringUTF(imgPath.c_str());
 }
 
-void loadExposureSeq(String path, vector<Mat>& images, vector<float>& times, int width, int height)
+void loadExposureSeq(String path, vector<Mat>& images, vector<float>& times, int maxHeight)
 {
     ifstream list_file((path + "p_file.txt").c_str());
     string name;
     float val;
     while(list_file >> name >> val) {
         Mat img = imread(path + name);
-        Size size(width, height);
+        cv::Size current_size = img.size();
         Mat dst;
-        resize(img,dst,size);
+
+        if(current_size.height <= maxHeight){
+            cv::Size size(current_size.width,  current_size.height);
+            resize(img, dst, size);
+        }else{
+            int width  = ((double) current_size.width / (double) current_size.height) * maxHeight;  
+            cv::Size size(width,  maxHeight);
+            resize(img, dst,size);
+        }
+        
         images.push_back(dst);
         times.push_back(val);
     }

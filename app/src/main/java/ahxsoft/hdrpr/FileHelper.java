@@ -26,13 +26,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FileHelper {
-
-
     private static final String P_FILE_NAME = "p_file.txt";
-    public static String durant = "_du.png";
     public static String hdr = ".hdr";
-    public static String drago = "_dra.png";
-    public static String fusion = "_fu.png";
+    public static String png = ".png";
+
 
     public static String getCurrentImageFolderName(Context context){
         SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.preferencesKey), Context.MODE_PRIVATE);
@@ -169,8 +166,12 @@ public class FileHelper {
         return true;
     }
 
-    public static Boolean copyAllImages(Activity activity) {
-        return copyImage(activity, durant) && copyImage(activity, hdr) && copyImage(activity, drago) && copyImage(activity, fusion);
+    public static Boolean copyAllImages(Activity activity, boolean saveHDFFile) {
+        boolean result = true;
+        if(saveHDFFile){
+            result = copyImage(activity, hdr);
+        }
+        return copyImage(activity, png) && result;
 
     }
 
