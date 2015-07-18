@@ -5,7 +5,8 @@
     android:orientation="horizontal"
     android:weightSum="2"
     android:minHeight="50dp"
-    android:textSize="12sp">
+    android:textSize="12sp"
+    android:descendantFocusability="beforeDescendants">
 
     <ImageView
         android:id="@+id/thumbImage"
@@ -60,7 +61,10 @@
                 android:paddingStart="15sp"
                 android:textSize="13sp"
                 android:paddingEnd="15sp"
-                android:enabled="true"/>
+                android:enabled="true">
+                <requestFocus />
+            </EditText>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

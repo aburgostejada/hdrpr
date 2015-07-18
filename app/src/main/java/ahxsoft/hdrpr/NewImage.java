@@ -23,6 +23,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
@@ -69,9 +71,8 @@ public class NewImage extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        String currentImageName = FileHelper.getCurrentImageFolderName(getActivity());
         try {
-            if (requestCode == RESULT_LOAD_IMAGES && resultCode == Activity.RESULT_OK && null != data && !currentImageName.equals("")) {
+            if (requestCode == RESULT_LOAD_IMAGES && resultCode == Activity.RESULT_OK && null != data) {
                 preProcessSetUp(data);
             } else {
                 AlertHelper.showLong(getActivity(), R.string.pickingImagesError);
@@ -235,26 +236,18 @@ public class NewImage extends Fragment {
 
     private ArrayList<ListItem> getListData(ClipData clipData) {
         ArrayList<ListItem> listData = new ArrayList<>();
-        File[] fileList = FileHelper.getMediaDirectory().listFiles();
-        Arrays.sort(fileList, new Comparator<File>() {
-            public int compare(File f1, File f2) {
-                return Double.compare(1 / FileHelper.getExposureTimeFromImagePath(f2.getAbsolutePath()), 1 / FileHelper.getExposureTimeFromImagePath(f1.getAbsolutePath()));
-            }
-        });
-
         for (int i = 0; i < clipData.getItemCount(); i++)
         {
             if(FileHelper.isExternalStorageWritable() && FileHelper.isExternalStorageReadable()){
                 File image = new File(FileHelper.getRealPathFromUri(getActivity(), clipData.getItemAt(i).getUri()));
                 if(FileHelper.isImage(image)){
                     listData.add(ListItem.newFromImage(image));
-                }
+            }
             }else{
                 AlertHelper.showShort(getActivity(), R.string.problemsWithExternalStorage);
             }
         }
-
-
+        Collections.sort(listData);
         return listData;
     }
 

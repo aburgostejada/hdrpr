@@ -68,7 +68,7 @@ public class ImageViewer extends Fragment {
         File[] fileList = FileHelper.getMediaDirectory().listFiles();
         Arrays.sort(fileList, new Comparator<File>() {
             public int compare(File f1, File f2) {
-                return Long.compare(f1.lastModified(), f2.lastModified());
+                return Long.compare(f2.lastModified(), f1.lastModified());
             }
         });
 

@@ -1,7 +1,19 @@
 package ahxsoft.hdrpr;
 
-import java.lang.Object;import java.lang.Override;import java.util.ArrayList;
-import android.content.Context;
+import java.io.File;
+import java.lang.Object;import java.lang.Override;
+import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.concurrent.ConcurrentHashMap;
+
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +30,7 @@ public class ImagesListAdapter extends BaseAdapter {
     private final int layout;
     private ArrayList<ListItem> listData;
     private LayoutInflater layoutInflater;
+    private final ImageHandler imageHandler = new ImageHandler();
 
     public ImagesListAdapter(FragmentActivity activity, ArrayList<ListItem> listData, int Layout) {
         this.listData = listData;
@@ -63,15 +76,15 @@ public class ImagesListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        ListItem newsItem = listData.get(position);
-        holder.nameView.setText(newsItem.getName());
+        ListItem item = listData.get(position);
+        holder.nameView.setText(item.getName());
 
         if (holder.imageView != null) {
-            new ImageAsyncTask(activity, holder.imageView).execute(newsItem.getImage());
+            imageHandler.load(item.getImage().getAbsolutePath(), holder.imageView);
         }
 
-        if(layout == NewImage && holder.exposure != null && newsItem.getExposureTime() != -1){
-            double exposureTime = newsItem.getExposureTime();
+        if(layout == NewImage && holder.exposure != null && item.getExposureTime() != -1){
+            double exposureTime = item.getExposureTime();
             String out;
             if(exposureTime < 1){
                 exposureTime = 1 / exposureTime;
@@ -85,10 +98,16 @@ public class ImagesListAdapter extends BaseAdapter {
         return convertView;
     }
 
+
+
     static class ViewHolder {
         TextView nameView;
         EditText exposure;
         ImageView imageView;
 
     }
+
+
+
 }
+

@@ -1,7 +1,9 @@
 package ahxsoft.hdrpr;
 
 import java.io.File;
-import java.lang.Override;import java.lang.String;public class ListItem {
+import java.lang.Override;import java.lang.String;
+
+public class ListItem implements Comparable {
 
 	private String name;
 	private File image;
@@ -45,4 +47,8 @@ import java.lang.Override;import java.lang.String;public class ListItem {
 		return imagesList;
 	}
 
+    @Override
+    public int compareTo(Object another) {
+        return Double.compare(((ListItem)another).getExposureTime(), getExposureTime());
+    }
 }

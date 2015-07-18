@@ -197,7 +197,7 @@ public class FileHelper {
             ExifInterface exif = new ExifInterface(image);
             String str = exif.getAttribute(ExifInterface.TAG_EXPOSURE_TIME);
             if(str != null){
-                exposure = Double.parseDouble(str);
+                return Double.parseDouble(str);
             }
         } catch (IOException e) {
             return exposure;

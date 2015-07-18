@@ -7,9 +7,9 @@
 
     <ImageView
         android:id="@+id/thumbImage"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:maxHeight="200sp"
+        android:paddingTop="10sp"
         android:contentDescription="@string/imageContainer"
         android:layout_centerHorizontal="true"
         android:adjustViewBounds="true"/>
@@ -22,9 +22,8 @@
         android:minLines="3"
         android:textAlignment="center"
         android:textSize="15sp"
-        android:paddingStart="15sp"
-        android:paddingEnd="15sp"
-        android:textStyle="bold|italic"
+        android:text="this is  a test"
+        android:textStyle="bold"
         android:layout_below="@id/thumbImage"
         android:gravity="center_vertical"
         android:typeface="monospace" />
