@@ -7,14 +7,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.support.v7.internal.widget.AdapterViewCompat;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import java.io.File;
@@ -24,8 +22,8 @@ import java.util.Comparator;
 
 public class ImageViewer extends Fragment {
     private static final String ARG_SECTION_NUMBER = "imageViewer";
-    View rootView;
     private int listPosition;
+    private View rootView;
 
     public static ImageViewer newInstance(int sectionNumber) {
         ImageViewer fragment = new ImageViewer();

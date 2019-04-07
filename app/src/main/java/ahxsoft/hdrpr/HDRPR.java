@@ -48,6 +48,12 @@ public class HDRPR extends ActionBarActivity implements NavigationDrawerFragment
             case 2:
                 fragmentManager.beginTransaction().replace(R.id.container, ImageViewer.newInstance(position)).commit();
                 break;
+            case 3:
+                fragmentManager.beginTransaction().replace(R.id.container, Guide.newInstance(position)).commit();
+                break;
+            case 4:
+                fragmentManager.beginTransaction().replace(R.id.container, About.newInstance(position)).commit();
+                break;
             default:
                 fragmentManager.beginTransaction().replace(R.id.container, Dashboard.newInstance(position)).commit();
                 break;
@@ -55,13 +61,11 @@ public class HDRPR extends ActionBarActivity implements NavigationDrawerFragment
     }
 
     public void goToDashboard(){
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.container, Dashboard.newInstance(0)).commit();
+        onNavigationDrawerItemSelected(0);
     }
 
     public void goToImages(){
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.container, ImageViewer.newInstance(2)).commit();
+        onNavigationDrawerItemSelected(2);
     }
 
     public void goToStartNewImage() {
@@ -70,8 +74,7 @@ public class HDRPR extends ActionBarActivity implements NavigationDrawerFragment
     }
 
     public void goToNewImage() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.container, NewImage.newInstance(1, false)).commit();
+        onNavigationDrawerItemSelected(1);
     }
 
     @Override
@@ -89,6 +92,12 @@ public class HDRPR extends ActionBarActivity implements NavigationDrawerFragment
                 break;
             case 2:
                 mTitle = getString(R.string.title_section3);
+                break;
+            case 3:
+                mTitle = getString(R.string.title_section5);
+                break;
+            case 4:
+                mTitle = getString(R.string.title_section4);
                 break;
             default:
                 mTitle = getTitle();

@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -20,27 +21,27 @@ public class AlertHelper {
     }
 
     public static void show(FragmentActivity activity, String text){
-        android.widget.Toast toast = android.widget.Toast.makeText(activity, text, android.widget.Toast.LENGTH_SHORT);
+        android.widget.Toast toast = android.widget.Toast.makeText(activity, text, Toast.LENGTH_SHORT);
         toast.show();
     }
 
     public static void showLong(FragmentActivity activity, String text){
-        android.widget.Toast toast = android.widget.Toast.makeText(activity, text, android.widget.Toast.LENGTH_SHORT);
+        android.widget.Toast toast = android.widget.Toast.makeText(activity, text, Toast.LENGTH_LONG);
         toast.show();
     }
 
     public static void showLong(FragmentActivity activity, int text){
-        android.widget.Toast toast = android.widget.Toast.makeText(activity, text, android.widget.Toast.LENGTH_SHORT);
+        android.widget.Toast toast = android.widget.Toast.makeText(activity, text, Toast.LENGTH_LONG);
         toast.show();
     }
 
     public static void showShort(FragmentActivity activity, String text){
-        android.widget.Toast toast = android.widget.Toast.makeText(activity, text, android.widget.Toast.LENGTH_SHORT);
+        android.widget.Toast toast = android.widget.Toast.makeText(activity, text, Toast.LENGTH_SHORT);
         toast.show();
     }
 
     public static void showShort(FragmentActivity activity, int text){
-        android.widget.Toast toast = android.widget.Toast.makeText(activity, text, android.widget.Toast.LENGTH_SHORT);
+        android.widget.Toast toast = android.widget.Toast.makeText(activity, text, Toast.LENGTH_SHORT);
         toast.show();
     }
 

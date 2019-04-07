@@ -75,7 +75,7 @@ public class NewImage extends Fragment {
                 AlertHelper.showLong(getActivity(), R.string.pickingImagesError);
             }
         } catch (Exception e) {
-            AlertHelper.showLong(getActivity(), R.string.generalError);
+            AlertHelper.showLong(getActivity(), R.string.errorPickingImages);
         }
     }
 
@@ -100,10 +100,6 @@ public class NewImage extends Fragment {
         rootView.findViewById(R.id.cancelNewImage).setVisibility(View.VISIBLE);
     }
 
-//    private void setCancelNewImageInVisible(View rootView) {
-//        rootView.findViewById(R.id.cancelNewImage).setVisibility(View.INVISIBLE);
-//    }
-
     private void prepareForProcessing(ClipData clipData) {
         for (int i = 0; i < clipData.getItemCount(); i++)
         {
@@ -112,7 +108,7 @@ public class NewImage extends Fragment {
                 File image = new File(FileHelper.getRealPathFromUri(getActivity(), uri));
                 String path = FileHelper.getCurrentFolderLocation(getActivity());
                 try {
-                    FileHelper.copyFile(image, new File(path + image.getName()));
+                    FileHelper.copyFile(image, new File(path + FileHelper.getValidFileName(image.getName())));
                 } catch (IOException e) {
                     AlertHelper.showLong(getActivity(), R.string.generalError);
                 }
@@ -215,7 +211,8 @@ public class NewImage extends Fragment {
     private void displayImagePicker(){
         Intent chooseIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         chooseIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        startActivityForResult(chooseIntent, RESULT_LOAD_IMAGES);
+        chooseIntent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(chooseIntent,"Select Picture"), RESULT_LOAD_IMAGES);
     }
 
     private void loadNewImages(View rootView){

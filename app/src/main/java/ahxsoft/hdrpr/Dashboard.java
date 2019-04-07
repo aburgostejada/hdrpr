@@ -40,9 +40,6 @@ public class Dashboard extends Fragment {
         return fragment;
     }
 
-    public Dashboard() {
-
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

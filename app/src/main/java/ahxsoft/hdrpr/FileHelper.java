@@ -1,10 +1,8 @@
 package ahxsoft.hdrpr;
 
 import android.app.Activity;
-import android.content.ComponentCallbacks;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.media.ExifInterface;
@@ -12,9 +10,7 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.app.FragmentActivity;
 import android.webkit.MimeTypeMap;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,6 +18,8 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,8 +41,12 @@ public class FileHelper {
         editor.commit();
     }
 
-    public static String getValidFileName(String name){
+    public static String getValidFolderName(String name){
         return name.replaceAll("\\W+", "");
+    }
+
+    public static String getValidFileName(String name) {
+        return name.replaceAll("\\s+", "_");
     }
 
     public static void copyFile(File sourceFile, File destFile) throws IOException {
@@ -107,7 +109,7 @@ public class FileHelper {
 
 
     public static String getFolderLocation(Context context, String currentImageName ) {
-        return context.getExternalFilesDir(null).getAbsolutePath() + File.separator + getValidFileName(currentImageName) + File.separator;
+        return context.getExternalFilesDir(null).getAbsolutePath() + File.separator + getValidFolderName(currentImageName) + File.separator;
     }
 
     public static String getCurrentFolderLocation(Context activity) {
@@ -213,7 +215,8 @@ public class FileHelper {
         {
             FileWriter writer = new FileWriter(new File(getCurrentFolderLocation(activity), P_FILE_NAME));
             for(Map.Entry<String, Double> image : dataFromView.entrySet()){
-                String line = image.getKey() + " " + image.getValue().toString() + eol;
+                NumberFormat formatter = new DecimalFormat("#0.00000000");
+                String line = FileHelper.getValidFileName(image.getKey()) + " " + formatter.format(image.getValue()) + eol;
                 writer.append(line);
             }
             writer.flush();
@@ -225,4 +228,6 @@ public class FileHelper {
         }
 
     }
+
+
 }

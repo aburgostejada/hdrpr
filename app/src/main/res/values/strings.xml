@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HDRPR</string>
+    <string name="app_name">HDR Preview</string>
 
     <string name="title_section1">Dashboard</string>
     <string name="title_section2">New Image</string>
@@ -46,6 +46,10 @@
     <string name="no">No</string>
     <string name="deleteImage">Delete image</string>
     <string name="areYouSure">Are you sure you want to delete</string>
+    <string name="back">Close</string>
+    <string name="title_section4">About</string>
+    <string name="title_section5">Guide</string>
+    <string name="errorPickingImages">Error selecting the images, try to use Google Photos Instead.</string>
 
     <string-array name="toneMapTypes">
         <item>Auto</item>
